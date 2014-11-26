@@ -1,0 +1,2 @@
+Imazen.NativeDependencyManager
+==============================
