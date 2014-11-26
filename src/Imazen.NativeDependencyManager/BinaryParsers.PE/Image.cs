@@ -43,6 +43,7 @@ namespace Mono.Cecil.PE {
         {
             get
             {
+                if (RuntimeVersion == null) return TargetRuntime.NotDotNet;
                 switch (RuntimeVersion[1])
                 {
                     case '1':

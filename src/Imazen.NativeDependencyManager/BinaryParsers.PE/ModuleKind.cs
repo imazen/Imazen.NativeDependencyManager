@@ -46,6 +46,7 @@ namespace Mono.Cecil {
 
 	[Flags]
 	public enum ModuleAttributes {
+        None =0,
 		ILOnly = 1,
 		Required32Bit = 2,
 		StrongNameSigned = 8,

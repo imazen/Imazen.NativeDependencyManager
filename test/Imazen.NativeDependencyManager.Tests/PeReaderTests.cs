@@ -66,19 +66,19 @@ namespace Mono.Cecil.Tests
                 Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
             });
 
-            //TestModule("NativeCpp_Release_x64.dll", i =>
-            //{
-            //    Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
-            //    Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
-            //    Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
-            //});
+            TestModule("NativeCpp_Release_x64.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.NotDotNet, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.None, i.Attributes);
+            });
 
-            //TestModule("NativeCpp_Release_Win32.dll", i =>
-            //{
-            //    Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
-            //    Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-            //    Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
-            //});
+            TestModule("NativeCpp_Release_Win32.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.NotDotNet, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.None, i.Attributes);
+            });
         }
 
 

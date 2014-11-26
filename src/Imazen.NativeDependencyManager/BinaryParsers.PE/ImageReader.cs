@@ -36,6 +36,7 @@ namespace Mono.Cecil.PE {
 
     public enum TargetRuntime
     {
+        NotDotNet,
         Net_1_0,
         Net_1_1,
         Net_2_0,
@@ -50,6 +51,8 @@ namespace Mono.Cecil.PE {
 
 		DataDirectory cli;
 		DataDirectory metadata;
+
+        bool RequireCLI = false;
 
 		public ImageReader (Stream stream)
 			: base (stream)
@@ -111,8 +114,8 @@ namespace Mono.Cecil.PE {
 			ushort subsystem, dll_characteristics;
 			ReadOptionalHeaders (out subsystem, out dll_characteristics);
 			ReadSections (sections);
-			ReadCLIHeader ();
-			ReadMetadata ();
+			if (!cli.IsZero) ReadCLIHeader ();
+			if (!metadata.IsZero) ReadMetadata ();
 
 			image.Kind = GetModuleKind (characteristics, subsystem);
 			image.Characteristics = (ModuleCharacteristics) dll_characteristics;
@@ -220,7 +223,7 @@ namespace Mono.Cecil.PE {
 			// CLIHeader			8
 			cli = ReadDataDirectory ();
 
-			if (cli.IsZero)
+            if (cli.IsZero && RequireCLI)
 				throw new BadImageFormatException ();
 
 			// Reserved				8
