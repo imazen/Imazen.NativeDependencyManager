@@ -1,0 +1,66 @@
+###############################################################################
+# normalize line endings on commit only.
+###############################################################################
+*.txt eol=crlf
+
+*.cs eol=lf diff=csharp 
+*.vb eol=lf
+*.resx eol=lf
+*.c eol=lf diff=cpp
+*.cpp eol=lf diff=cpp
+*.cxx eol=lf diff=cpp
+*.h eol=lf diff=cpp
+*.hxx eol=lf diff=cpp
+*.py eol=lf
+*.rb eol=lf
+*.java eol=lf
+*.html eol=lf diff=html
+*.htm eol=lf diff=html
+*.css eol=lf
+*.scss eol=lf
+*.sass eol=lf
+*.less eol=lf
+*.js eol=lf
+*.lisp eol=lf
+*.clj eol=lf
+*.sql eol=lf
+*.php eol=lf
+*.lua eol=lf
+*.m eol=lf
+*.asm eol=lf
+*.erl eol=lf
+*.fs eol=lf
+*.fsx eol=lf
+*.hs eol=lf
+
+###############################################################################
+# Set the merge driver for project and solution files; use windows line endings always
+#
+# Merging from the command prompt will add diff markers to the files if there
+# are conflicts (Merging from VS is not affected by the settings below, in VS
+# the diff markers are never inserted). Diff markers may cause the following 
+# file extensions to fail to load in VS. An alternative would be to treat
+# these files as binary and thus will always conflict and require user
+# intervention with every merge. To do so, just uncomment the entries below
+###############################################################################
+*.sln       eol=crlf merge=binary
+*.csproj    eol=crlf merge=binary
+*.vbproj    eol=crlf merge=binary
+*.vcxproj   eol=crlf merge=binary
+*.vcproj    eol=crlf merge=binary
+*.dbproj    eol=crlf merge=binary
+*.fsproj    eol=crlf merge=binary
+*.lsproj    eol=crlf merge=binary
+*.wixproj   eol=crlf merge=binary
+*.modelproj eol=crlf merge=binary
+*.sqlproj   eol=crlf merge=binary
+*.wwaproj   eol=crlf merge=binary
+
+###############################################################################
+# behavior for image files
+#
+# image files are treated as binary by default.
+###############################################################################
+*.jpg   binary
+*.png   binary
+*.gif   binary
