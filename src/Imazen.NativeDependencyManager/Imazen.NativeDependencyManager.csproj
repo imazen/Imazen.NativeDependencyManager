@@ -39,13 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryParsers.PE\Actions.cs" />
     <Compile Include="BinaryParsers.PE\BinaryStreamReader.cs" />
-    <Compile Include="BinaryParsers.PE\ByteBuffer.cs" />
-    <Compile Include="BinaryParsers.PE\ByteBufferEqualityComparer.cs" />
     <Compile Include="BinaryParsers.PE\DataDirectory.cs" />
     <Compile Include="BinaryParsers.PE\Empty.cs" />
-    <Compile Include="BinaryParsers.PE\Funcs.cs" />
     <Compile Include="BinaryParsers.PE\Image.cs" />
     <Compile Include="BinaryParsers.PE\ImageReader.cs" />
     <Compile Include="BinaryParsers.PE\ModuleKind.cs" />

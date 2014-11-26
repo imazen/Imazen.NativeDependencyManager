@@ -120,34 +120,5 @@ namespace Mono.Cecil.PE {
 			return null;
 		}
 
-		public ImageDebugDirectory GetDebugHeader (out byte [] header)
-		{
-			var section = GetSectionAtVirtualAddress (Debug.VirtualAddress);
-			var buffer = new ByteBuffer (section.Data);
-			buffer.position = (int) (Debug.VirtualAddress - section.VirtualAddress);
-
-			var directory = new ImageDebugDirectory {
-				Characteristics = buffer.ReadInt32 (),
-				TimeDateStamp = buffer.ReadInt32 (),
-				MajorVersion = buffer.ReadInt16 (),
-				MinorVersion = buffer.ReadInt16 (),
-				Type = buffer.ReadInt32 (),
-				SizeOfData = buffer.ReadInt32 (),
-				AddressOfRawData = buffer.ReadInt32 (),
-				PointerToRawData = buffer.ReadInt32 (),
-			};
-
-			if (directory.SizeOfData == 0 || directory.PointerToRawData == 0) {
-				header = Empty<byte>.Array;
-				return directory;
-			}
-
-			buffer.position = (int) (directory.PointerToRawData - section.PointerToRawData);
-
-			header = new byte [directory.SizeOfData];
-			Buffer.BlockCopy (buffer.buffer, buffer.position, header, 0, header.Length);
-
-			return directory;
-		}
 	}
 }
