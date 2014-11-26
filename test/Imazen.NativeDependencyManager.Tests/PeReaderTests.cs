@@ -14,6 +14,75 @@ namespace Mono.Cecil.Tests
     {
 
         [Test]
+        public void CppCli()
+        {
+            TestModule("cppcli.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.Net_2_0, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
+            });
+
+
+            TestModule("CppCli_Release_x64.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
+            });
+
+            TestModule("CppCli_Release_x64_Safe.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.I386, i.Architecture); //AnyCPU??
+                Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
+            });
+
+            TestModule("CppCli_Release_x64_Pure.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
+            });
+
+            TestModule("CppCli_Release_Win32.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
+            });
+
+            TestModule("CppCli_Release_Win32_Safe.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
+            });
+
+            TestModule("CppCli_Release_Win32_Pure.dll", i =>
+            {
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
+            });
+
+            //TestModule("NativeCpp_Release_x64.dll", i =>
+            //{
+            //    Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+            //    Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
+            //    Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
+            //});
+
+            //TestModule("NativeCpp_Release_Win32.dll", i =>
+            //{
+            //    Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+            //    Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+            //    Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
+            //});
+        }
+
+
+        [Test]
         public void ImageSections()
         {
             var image = GetResourceImage("hello.exe");

@@ -49,6 +49,7 @@ namespace Mono.Cecil {
 		ILOnly = 1,
 		Required32Bit = 2,
 		StrongNameSigned = 8,
+        Value_16=16,
 		Preferred32Bit = 0x00020000,
 	}
 
