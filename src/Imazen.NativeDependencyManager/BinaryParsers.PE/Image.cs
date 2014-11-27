@@ -37,27 +37,10 @@ namespace Mono.Cecil.PE {
 	public sealed class Image {
 
 		public ModuleKind Kind;
-		public string RuntimeVersion;
+		public string DotNetRuntimeVersionString;
 
-        public TargetRuntime ParseRuntime
-        {
-            get
-            {
-                if (RuntimeVersion == null) return TargetRuntime.NotDotNet;
-                switch (RuntimeVersion[1])
-                {
-                    case '1':
-                        return RuntimeVersion[3] == '0'
-                            ? TargetRuntime.Net_1_0
-                            : TargetRuntime.Net_1_1;
-                    case '2':
-                        return TargetRuntime.Net_2_0;
-                    case '4':
-                    default:
-                        return TargetRuntime.Net_4_0;
-                }
-            }
-        }
+        public TargetRuntime DotNetRuntime = TargetRuntime.NotDotNet;
+    
 		public TargetArchitecture Architecture;
 		public ModuleCharacteristics Characteristics;
 		public string FileName;
@@ -96,17 +79,7 @@ namespace Mono.Cecil.PE {
 			return rva + section.PointerToRawData - section.VirtualAddress;
 		}
 
-		public Section GetSection (string name)
-		{
-			var sections = this.Sections;
-			for (int i = 0; i < sections.Length; i++) {
-				var section = sections [i];
-				if (section.Name == name)
-					return section;
-			}
-
-			return null;
-		}
+	
 
 		public Section GetSectionAtVirtualAddress (RVA rva)
 		{

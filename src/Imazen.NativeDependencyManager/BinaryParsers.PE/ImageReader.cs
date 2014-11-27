@@ -34,15 +34,6 @@ using RVA = System.UInt32;
 
 namespace Mono.Cecil.PE {
 
-    public enum TargetRuntime
-    {
-        NotDotNet,
-        Net_1_0,
-        Net_1_1,
-        Net_2_0,
-        Net_4_0,
-    }
-
 
 
 	public sealed class ImageReader : BinaryStreamReader {
@@ -230,22 +221,6 @@ namespace Mono.Cecil.PE {
 			Advance (8);
 		}
 
-		string ReadAlignedString (int length)
-		{
-			int read = 0;
-			var buffer = new char [length];
-			while (read < length) {
-				var current = ReadByte ();
-				if (current == 0)
-					break;
-
-				buffer [read++] = (char) current;
-			}
-
-			Advance (-1 + ((read + 4) & ~3) - read);
-
-			return new string (buffer, 0, read);
-		}
 
 		string ReadZeroTerminatedString (int length)
 		{
@@ -355,7 +330,9 @@ namespace Mono.Cecil.PE {
 			// Reserved				4
 			Advance (8);
 
-			image.RuntimeVersion = ReadZeroTerminatedString (ReadInt32 ());
+			var s = ReadZeroTerminatedString (ReadInt32 ());
+            image.DotNetRuntimeVersionString = s;
+            image.DotNetRuntime = ParseDotNetRuntimeVersion(s);
 
 			// Flags		2
 			Advance (2);
@@ -370,7 +347,24 @@ namespace Mono.Cecil.PE {
 
 		}
 
-	
+
+        private TargetRuntime ParseDotNetRuntimeVersion(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return TargetRuntime.NotDotNet;
+            switch (s[1])
+            {
+                case '1':
+                    return s[3] == '0'
+                        ? TargetRuntime.Net_1_0
+                        : TargetRuntime.Net_1_1;
+                case '2':
+                    return TargetRuntime.Net_2_0;
+                case '4':
+                default:
+                    return TargetRuntime.Net_4_0;
+            }
+            
+        }
 
 		public static Image ReadImageFrom (Stream stream)
 		{

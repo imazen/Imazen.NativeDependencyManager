@@ -30,6 +30,16 @@ using System;
 
 namespace Mono.Cecil {
 
+    public enum TargetRuntime
+    {
+        NotDotNet,
+        Net_1_0,
+        Net_1_1,
+        Net_2_0,
+        Net_4_0,
+    }
+
+
 	public enum ModuleKind {
 		Dll,
 		Console,

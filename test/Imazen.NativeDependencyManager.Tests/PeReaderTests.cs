@@ -25,7 +25,7 @@ namespace Mono.Cecil.Tests
 
             foreach (var i in new[] { x86, x86_unsafe, x64, x64_unsafe, anycpu, anycpu_unsafe })
             {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
                 Assert.True((ModuleAttributes.ILOnly & i.Attributes) != 0); //They should all be IL only
 
                 Assert.False((ModuleAttributes.Preferred32Bit & i.Attributes) != 0);
@@ -55,8 +55,8 @@ namespace Mono.Cecil.Tests
 
             Assert.AreEqual(ModuleAttributes.None, native_x86.Attributes);
             Assert.AreEqual(ModuleAttributes.None, native_x64.Attributes);
-            Assert.AreEqual(TargetRuntime.NotDotNet, native_x86.ParseRuntime);
-            Assert.AreEqual(TargetRuntime.NotDotNet, native_x64.ParseRuntime);
+            Assert.AreEqual(TargetRuntime.NotDotNet, native_x86.DotNetRuntime);
+            Assert.AreEqual(TargetRuntime.NotDotNet, native_x64.DotNetRuntime);
             Assert.AreEqual(TargetArchitecture.AMD64, native_x64.Architecture);
             Assert.AreEqual(TargetArchitecture.I386, native_x86.Architecture);
 
@@ -68,7 +68,7 @@ namespace Mono.Cecil.Tests
         {
             var cppcli2 = GetResourceImage("cppcli.dll");
 
-            Assert.AreEqual(TargetRuntime.Net_2_0, cppcli2.ParseRuntime);
+            Assert.AreEqual(TargetRuntime.Net_2_0, cppcli2.DotNetRuntime);
             Assert.AreEqual(TargetArchitecture.I386, cppcli2.Architecture);
             Assert.AreEqual(ModuleAttributes.Value_16, cppcli2.Attributes);
         }
@@ -84,7 +84,7 @@ namespace Mono.Cecil.Tests
 
             foreach (var i in new[] { w32, w32_safe, w32_pure })
             {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
                 Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
             }
 
@@ -105,7 +105,7 @@ namespace Mono.Cecil.Tests
             
             foreach (var i in new[] { x64, x64_safe, x64_pure })
             {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
             }
 
             Assert.AreEqual(TargetArchitecture.AMD64, x64.Architecture);
@@ -136,10 +136,10 @@ namespace Mono.Cecil.Tests
         public void ImageMetadataVersion()
         {
             var image = GetResourceImage("hello.exe");
-            Assert.AreEqual(TargetRuntime.Net_2_0, image.ParseRuntime);
+            Assert.AreEqual(TargetRuntime.Net_2_0, image.DotNetRuntime);
 
             image = GetResourceImage("hello1.exe");
-            Assert.AreEqual(TargetRuntime.Net_1_1, image.ParseRuntime);
+            Assert.AreEqual(TargetRuntime.Net_1_1, image.DotNetRuntime);
         }
 
         [Test]
@@ -159,73 +159,66 @@ namespace Mono.Cecil.Tests
         [Test]
         public void X64Module()
         {
-            TestModule("hello.x64.exe", i =>
-            {
-                Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
-            });
+            var i = GetResourceImage("hello.x64.exe");
+            Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
+            Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
+           
         }
 
         [Test]
         public void IA64Module()
         {
-            TestModule("hello.ia64.exe", i =>
-            {
-                Assert.AreEqual(TargetArchitecture.IA64, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
-            });
+            var i = GetResourceImage("hello.ia64.exe");
+            
+            Assert.AreEqual(TargetArchitecture.IA64, i.Architecture);
+            Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
+            
         }
 
         [Test]
         public void X86Module()
         {
-            TestModule("hello.x86.exe", i =>
-            {
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.ILOnly | ModuleAttributes.Required32Bit, i.Attributes);
-            });
+            var i = GetResourceImage("hello.x86.exe");
+            Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+            Assert.AreEqual(ModuleAttributes.ILOnly | ModuleAttributes.Required32Bit, i.Attributes);
+            
         }
 
         [Test]
         public void AnyCpuModule()
         {
-            TestModule("hello.anycpu.exe", i =>
-            {
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
-            });
+            var i = GetResourceImage("hello.anycpu.exe");
+            Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+            Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
+           
         }
 
         [Test]
         public void DelaySignedAssembly()
         {
-            TestModule("delay-signed.dll", i =>
-            {
-  
-                Assert.AreNotEqual(ModuleAttributes.StrongNameSigned, i.Attributes & ModuleAttributes.StrongNameSigned);
-                Assert.AreNotEqual(0, i.StrongName.VirtualAddress);
-                Assert.AreNotEqual(0, i.StrongName.Size);
-            });
+            var i = GetResourceImage("delay-signed.dll");
+            Assert.AreNotEqual(ModuleAttributes.StrongNameSigned, i.Attributes & ModuleAttributes.StrongNameSigned);
+            Assert.AreNotEqual(0, i.StrongName.VirtualAddress);
+            Assert.AreNotEqual(0, i.StrongName.Size);
+           
         }
 
         [Test]
         public void WindowsPhoneNonSignedAssembly()
         {
-            TestModule("wp7.dll", i =>
-            {
-                Assert.AreNotEqual(ModuleAttributes.StrongNameSigned, i.Attributes & ModuleAttributes.StrongNameSigned);
-                Assert.AreEqual(0, i.StrongName.VirtualAddress);
-                Assert.AreEqual(0, i.StrongName.Size);
-            });
+            var i = GetResourceImage("wp7.dll");
+            Assert.AreNotEqual(ModuleAttributes.StrongNameSigned, i.Attributes & ModuleAttributes.StrongNameSigned);
+            Assert.AreEqual(0, i.StrongName.VirtualAddress);
+            Assert.AreEqual(0, i.StrongName.Size);
+           
         }
 
         [Test]
         public void MetroAssembly()
         {
-            TestModule("metro.exe", module =>
-            {
-                Assert.AreEqual(ModuleCharacteristics.AppContainer, module.Characteristics & ModuleCharacteristics.AppContainer);
-            });
+            var i = GetResourceImage("metro.exe");
+            Assert.AreEqual(ModuleCharacteristics.AppContainer, i.Characteristics & ModuleCharacteristics.AppContainer);
+            
         }
     }
 }
