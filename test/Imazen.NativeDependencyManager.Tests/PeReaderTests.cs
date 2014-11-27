@@ -86,8 +86,14 @@ namespace Mono.Cecil.Tests
             {
                 Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
                 Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
             }
+
+            Assert.AreEqual(ModuleAttributes.Value_16, w32.Attributes);
+            Assert.AreEqual(ModuleAttributes.ILOnly , w32_safe.Attributes);
+
+            Assert.AreEqual(ModuleAttributes.ILOnly | ModuleAttributes.Required32Bit, w32_pure.Attributes);
+
+
         }
 
         [Test]
