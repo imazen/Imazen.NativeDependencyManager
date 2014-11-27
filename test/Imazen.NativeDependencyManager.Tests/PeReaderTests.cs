@@ -14,71 +14,104 @@ namespace Mono.Cecil.Tests
     {
 
         [Test]
-        public void CppCli()
+        public void CSharp()
         {
-            TestModule("cppcli.dll", i =>
-            {
-                Assert.AreEqual(TargetRuntime.Net_2_0, i.ParseRuntime);
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
-            });
+            var x86 = GetResourceImage("Csharp_x86.dll");
+            var x86_unsafe = GetResourceImage("Csharp_x86_unsafe.dll");
+            var x64 = GetResourceImage("Csharp_x64.dll");
+            var x64_unsafe = GetResourceImage("Csharp_x64_unsafe.dll");
+            var anycpu = GetResourceImage("Csharp_AnyCPU.dll");
+            var anycpu_unsafe = GetResourceImage("Csharp_AnyCPU_unsafe.dll");
 
-
-            TestModule("CppCli_Release_x64.dll", i =>
+            foreach (var i in new[] { x86, x86_unsafe, x64, x64_unsafe, anycpu, anycpu_unsafe })
             {
                 Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
+                Assert.True((ModuleAttributes.ILOnly & i.Attributes) != 0); //They should all be IL only
+
+                Assert.False((ModuleAttributes.Preferred32Bit & i.Attributes) != 0);
+                Assert.False((ModuleAttributes.StrongNameSigned & i.Attributes) != 0);
+                Assert.False((ModuleAttributes.Value_16 & i.Attributes) != 0);
+            }
+            foreach (var i in new[] { x86, x86_unsafe })
+            {
+                Assert.True((ModuleAttributes.Required32Bit & i.Attributes) != 0);
+            }
+            foreach (var i in new[] { x86, x86_unsafe, anycpu, anycpu_unsafe })
+            {
+                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+            }
+            foreach (var i in new[] {x64, x64_unsafe })
+            {
                 Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
-            });
+            }
+        }
 
-            TestModule("CppCli_Release_x64_Safe.dll", i =>
-            {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture); //AnyCPU??
-                Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
-            });
+        [Test]
 
-            TestModule("CppCli_Release_x64_Pure.dll", i =>
-            {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
-                Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
-            });
+        public void TestNative()
+        {
+            var native_x86 = GetResourceImage("NativeCpp_Release_Win32.dll");
+            var native_x64 = GetResourceImage("NativeCpp_Release_x64.dll");
 
-            TestModule("CppCli_Release_Win32.dll", i =>
+            Assert.AreEqual(ModuleAttributes.None, native_x86.Attributes);
+            Assert.AreEqual(ModuleAttributes.None, native_x64.Attributes);
+            Assert.AreEqual(TargetRuntime.NotDotNet, native_x86.ParseRuntime);
+            Assert.AreEqual(TargetRuntime.NotDotNet, native_x64.ParseRuntime);
+            Assert.AreEqual(TargetArchitecture.AMD64, native_x64.Architecture);
+            Assert.AreEqual(TargetArchitecture.I386, native_x86.Architecture);
+
+
+        }
+
+        [Test]
+        public void CppCli_2_0()
+        {
+            var cppcli2 = GetResourceImage("cppcli.dll");
+
+            Assert.AreEqual(TargetRuntime.Net_2_0, cppcli2.ParseRuntime);
+            Assert.AreEqual(TargetArchitecture.I386, cppcli2.Architecture);
+            Assert.AreEqual(ModuleAttributes.Value_16, cppcli2.Attributes);
+        }
+
+
+        [Test]
+        public void CppCli_4_Win_32()
+        {
+
+            var w32 = GetResourceImage("CppCli_Release_Win32.dll");
+            var w32_safe = GetResourceImage("CppCli_Release_Win32_Safe.dll");
+            var w32_pure = GetResourceImage("CppCli_Release_Win32_Pure.dll");
+
+            foreach (var i in new[] { w32, w32_safe, w32_pure })
             {
                 Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
                 Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
                 Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
-            });
+            }
+        }
 
-            TestModule("CppCli_Release_Win32_Safe.dll", i =>
+        [Test]
+        public void CppCli_4_x64()
+        {
+            var x64 = GetResourceImage("CppCli_Release_x64.dll");
+            var x64_safe = GetResourceImage("CppCli_Release_x64_Safe.dll");
+            var x64_pure = GetResourceImage("CppCli_Release_x64_Pure.dll");
+            
+            foreach (var i in new[] { x64, x64_safe, x64_pure })
             {
                 Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
-            });
+            }
 
-            TestModule("CppCli_Release_Win32_Pure.dll", i =>
-            {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.ParseRuntime);
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.Value_16, i.Attributes);
-            });
+            Assert.AreEqual(TargetArchitecture.AMD64, x64.Architecture);
+            Assert.AreEqual(ModuleAttributes.Value_16, x64.Attributes);
+            
+            
+            Assert.AreEqual(TargetArchitecture.I386, x64_safe.Architecture); //AnyCPU??
+            Assert.AreEqual(ModuleAttributes.ILOnly, x64_safe.Attributes);
 
-            TestModule("NativeCpp_Release_x64.dll", i =>
-            {
-                Assert.AreEqual(TargetRuntime.NotDotNet, i.ParseRuntime);
-                Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.None, i.Attributes);
-            });
+            Assert.AreEqual(TargetArchitecture.AMD64, x64_pure.Architecture);
+            Assert.AreEqual(ModuleAttributes.ILOnly, x64_pure.Attributes);
 
-            TestModule("NativeCpp_Release_Win32.dll", i =>
-            {
-                Assert.AreEqual(TargetRuntime.NotDotNet, i.ParseRuntime);
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-                Assert.AreEqual(ModuleAttributes.None, i.Attributes);
-            });
         }
 
 
