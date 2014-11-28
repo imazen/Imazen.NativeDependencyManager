@@ -30,7 +30,7 @@ using System;
 using System.Runtime.InteropServices;
 using RVA = System.UInt32;
 
-namespace Mono.Cecil.PE {
+namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 	public struct DataDirectory {
 

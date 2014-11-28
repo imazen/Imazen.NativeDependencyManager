@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 
-using Mono.Cecil;
-using Mono.Cecil.PE;
+using Imazen.NativeDependencyManager.BinaryParsers;
+using Imazen.NativeDependencyManager.BinaryParsers.PE;
 
 using NUnit.Framework;
 
-namespace Mono.Cecil.Tests
+namespace Imazen.NativeDependencyManager.BinaryParsers.Tests
 {
 
     [TestFixture]

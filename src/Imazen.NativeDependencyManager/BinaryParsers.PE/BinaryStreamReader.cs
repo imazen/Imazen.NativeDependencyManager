@@ -29,7 +29,7 @@
 using System;
 using System.IO;
 
-namespace Mono.Cecil.PE {
+namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 	public class BinaryStreamReader : BinaryReader {
 

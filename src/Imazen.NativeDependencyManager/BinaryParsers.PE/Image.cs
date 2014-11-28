@@ -28,11 +28,11 @@
 
 using System;
 
-using Mono;
+using Imazen;
 
 using RVA = System.UInt32;
 
-namespace Mono.Cecil.PE {
+namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 	public sealed class Image {
 

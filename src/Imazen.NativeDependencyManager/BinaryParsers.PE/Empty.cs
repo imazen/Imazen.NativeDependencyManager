@@ -26,19 +26,16 @@
 //WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-using Mono.Cecil.PE;
+using Imazen.NativeDependencyManager.BinaryParsers.PE;
 using System;
 using System.IO;
 
-namespace Mono {
+namespace Imazen.NativeDependencyManager.BinaryParsers {
+    static class Empty<T>
+    {
 
-	static class Empty<T> {
-
-		public static readonly T [] Array = new T [0];
-	}
-}
-
-namespace Mono.Cecil {
+        public static readonly T[] Array = new T[0];
+    }
 
 	static partial class Mixin {
 

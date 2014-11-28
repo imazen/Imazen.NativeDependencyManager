@@ -28,7 +28,7 @@
 
 using System;
 
-namespace Mono.Cecil {
+namespace Imazen.NativeDependencyManager.BinaryParsers {
 
     public enum TargetRuntime
     {

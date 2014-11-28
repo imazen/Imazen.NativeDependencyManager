@@ -3,9 +3,9 @@ using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 
-using Mono.Cecil.PE;
+using Imazen.NativeDependencyManager.BinaryParsers.PE;
 
-namespace Mono.Cecil.Tests
+namespace Imazen.NativeDependencyManager.BinaryParsers.Tests
 {
 
     public  abstract class BaseTestFixture
