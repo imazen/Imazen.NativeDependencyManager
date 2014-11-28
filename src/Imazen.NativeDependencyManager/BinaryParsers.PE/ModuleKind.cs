@@ -33,6 +33,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
     public enum TargetRuntime
     {
         NotDotNet,
+        DotNet,
         Net_1_0,
         Net_1_1,
         Net_2_0,

@@ -4,6 +4,7 @@ using System.Reflection;
 using NUnit.Framework;
 
 using Imazen.NativeDependencyManager.BinaryParsers.PE;
+using System.Diagnostics;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.Tests
 {
@@ -24,7 +25,11 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.Tests
         internal Image GetResourceImage(string name)
         {
             using (var fs = new FileStream(GetAssemblyResourcePath(name, GetType().Assembly), FileMode.Open, FileAccess.Read))
-                return ImageReader.ReadImageFrom(fs);
+            {
+                var r= ImageReader.ReadImageFrom(fs, true);
+                Trace.Write("Read " + fs.Position + " bytes from " + name + "\n");
+                return r;
+            }
         }
 
 

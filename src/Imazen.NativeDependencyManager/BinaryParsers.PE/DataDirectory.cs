@@ -48,16 +48,4 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 		}
 	}
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct ImageDebugDirectory
-    {
-        public int Characteristics;
-        public int TimeDateStamp;
-        public short MajorVersion;
-        public short MinorVersion;
-        public int Type;
-        public int SizeOfData;
-        public int AddressOfRawData;
-        public int PointerToRawData;
-    }
 }

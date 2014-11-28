@@ -27,7 +27,7 @@
 //
 
 using System;
-
+using System.IO;
 using RVA = System.UInt32;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
@@ -38,6 +38,5 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 		public uint VirtualSize;
 		public uint SizeOfRawData;
 		public uint PointerToRawData;
-		public byte [] Data;
 	}
 }

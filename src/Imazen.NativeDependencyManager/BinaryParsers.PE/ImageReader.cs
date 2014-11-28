@@ -45,6 +45,10 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
             image.FileName = FileStreamName;
 		}
+        /// <summary>
+        /// If true, will read the CLR version and assembly characteristics - this can require 2 additional seeks over dozens of kb
+        /// </summary>
+        public bool ReadClrInfo { get; set; }
 
         protected void Advance(int bytes)
         {
@@ -61,8 +65,6 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 		DataDirectory cli;
 		DataDirectory metadata;
 
-        bool RequireCLI = false;
-
 
         /// <summary>
         /// Returns the full path of the underlying FileStream - if it's actually a file stream.
@@ -78,12 +80,12 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 		
 
-		void MoveTo (DataDirectory directory)
+		public void MoveTo (DataDirectory directory)
 		{
 			BaseStream.Position = image.ResolveVirtualAddress (directory.VirtualAddress);
 		}
 
-		void MoveTo (uint position)
+		public void MoveTo (uint position)
 		{
 			BaseStream.Position = position;
 		}
@@ -129,12 +131,19 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 			ushort subsystem, dll_characteristics;
 			ReadOptionalHeaders (out subsystem, out dll_characteristics);
-			ReadSections (sections);
-			if (!cli.IsZero) ReadCLIHeader ();
-			if (!metadata.IsZero) ReadMetadata ();
-
 			image.Kind = GetModuleKind (characteristics, subsystem);
 			image.Characteristics = (ModuleCharacteristics) dll_characteristics;
+
+            if (!cli.IsZero)
+                image.DotNetRuntime = TargetRuntime.DotNet;
+
+            if (ReadClrInfo && !cli.IsZero)
+            {
+                ReadSections(sections);
+                ReadCLIInfo();
+            }
+
+
 		}
 
 		TargetArchitecture ReadArchitecture ()
@@ -239,9 +248,6 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 			// CLIHeader			8
 			cli = ReadDataDirectory ();
 
-            if (cli.IsZero && RequireCLI)
-				throw new BadImageFormatException ();
-
 			// Reserved				8
 			Advance (8);
 		}
@@ -292,41 +298,24 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 				sections [i] = section;
 
-				ReadSectionData (section);
 			}
 
 			image.Sections = sections;
 		}
 
-		void ReadSectionData (Section section)
-		{
-			var position = BaseStream.Position;
+		
 
-			MoveTo (section.PointerToRawData);
-
-			var length = (int) section.SizeOfRawData;
-			var data = new byte [length];
-			int offset = 0, read;
-
-			while ((read = Read (data, offset, length - offset)) > 0)
-				offset += read;
-
-			section.Data = data;
-
-			BaseStream.Position = position;
-		}
-
-		void ReadCLIHeader ()
+		void ReadCLIInfo ()
 		{
 			MoveTo (cli);
 
 			// - CLIHeader
 
-			// Cb						4
-			// MajorRuntimeVersion		2
-			// MinorRuntimeVersion		2
+			// Cb						4 (0x48 00 00 00)
+			// MajorRuntimeVersion		2 (0x02 0x00)
+			// MinorRuntimeVersion		2 (0x05 0x00)
 			Advance (8);
-
+            
 			// Metadata					8
 			metadata = ReadDataDirectory ();
 			// Flags					4
@@ -341,10 +330,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 			// VTableFixups				8
 			// ExportAddressTableJumps	8
 			// ManagedNativeHeader		8
-		}
 
-		void ReadMetadata ()
-		{
 			MoveTo (metadata);
 
 			if (ReadUInt32 () != 0x424a5342)
@@ -358,18 +344,6 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 			var s = ReadZeroTerminatedString (ReadInt32 ());
             image.DotNetRuntimeVersionString = s;
             image.DotNetRuntime = ParseDotNetRuntimeVersion(s);
-
-			// Flags		2
-			Advance (2);
-
-			var streams = ReadUInt16 ();
-
-			var section = image.GetSectionAtVirtualAddress (metadata.VirtualAddress);
-			if (section == null)
-				throw new BadImageFormatException ();
-
-			image.MetadataSection = section;
-
 		}
 
 
@@ -391,9 +365,9 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
             
         }
 
-		public static Image ReadImageFrom (Stream stream)
+		public static Image ReadImageFrom (Stream stream, bool minimal)
 		{
-            var reader = new ImageReader (stream);
+            var reader = new ImageReader(stream) { ReadClrInfo =true };
 				
 			try {
 				reader.ReadImage ();

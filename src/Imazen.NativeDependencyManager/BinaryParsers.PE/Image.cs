@@ -40,14 +40,15 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 		public string DotNetRuntimeVersionString;
 
         public TargetRuntime DotNetRuntime = TargetRuntime.NotDotNet;
-    
+
+
+
 		public TargetArchitecture Architecture;
 		public ModuleCharacteristics Characteristics;
 		public string FileName;
 
 		public Section [] Sections;
 
-		public Section MetadataSection;
 
 		public uint EntryPointToken;
 		public ModuleAttributes Attributes;
@@ -56,8 +57,6 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 		public DataDirectory Resources;
 		public DataDirectory StrongName;
 
-
-		readonly int [] coded_index_sizes = new int [13];
 
 		
 		public Image ()
