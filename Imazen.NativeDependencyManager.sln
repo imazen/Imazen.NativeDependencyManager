@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imazen.NativeDependencyMana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imazen.NativeDependencyManager.Tests", "test\Imazen.NativeDependencyManager.Tests\Imazen.NativeDependencyManager.Tests.csproj", "{CF9F704A-FA24-4247-9C9D-B18333606A83}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7FD77256-4D16-4940-9A28-E412BFD024F2}"
+	ProjectSection(SolutionItems) = preProject
+		NOTICE = NOTICE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
