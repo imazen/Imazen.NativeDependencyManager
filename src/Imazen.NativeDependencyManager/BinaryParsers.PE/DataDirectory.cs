@@ -32,16 +32,18 @@ using RVA = System.UInt32;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
-	public struct DataDirectory {
+    internal struct DataDirectory
+    {
 
-		public readonly RVA VirtualAddress;
-		public readonly uint Size;
+        internal readonly RVA VirtualAddress;
+        internal readonly uint Size;
 
-		public bool IsZero {
+        internal bool IsZero
+        {
 			get { return VirtualAddress == 0 && Size == 0; }
 		}
 
-		public DataDirectory (RVA rva, uint size)
+        internal DataDirectory(RVA rva, uint size)
 		{
 			this.VirtualAddress = rva;
 			this.Size = size;

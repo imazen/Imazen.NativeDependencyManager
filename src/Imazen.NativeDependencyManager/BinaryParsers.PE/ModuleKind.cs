@@ -30,7 +30,7 @@ using System;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
-    public enum TargetRuntime
+    internal enum TargetRuntime
     {
         NotDotNet,
         DotNet,
@@ -41,32 +41,19 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
     }
 
 
-	public enum ModuleKind {
+	internal enum ModuleKind {
 		Dll,
 		Console,
 		Windows,
 		NetModule,
 	}
 
-	public enum TargetArchitecture {
-		I386,
-		AMD64,
-		IA64,
-		ARMv7,
-	}
+
+
 
 	[Flags]
-	public enum ModuleAttributes {
-        None =0,
-		ILOnly = 1,
-		Required32Bit = 2,
-		StrongNameSigned = 8,
-        Value_16=16,
-		Preferred32Bit = 0x00020000,
-	}
-
-	[Flags]
-	public enum ModuleCharacteristics {
+    internal enum ModuleCharacteristics
+    {
 		HighEntropyVA = 0x0020,
 		DynamicBase = 0x0040,
 		NoSEH = 0x0400,

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.ELF
 {
-    public class ElfInfo
+    internal class ElfInfo
     {
-        public ElfInfo(ElfFormat format, ElfInstructionSet instructionSet, ElfEndian endian, ElfAbi abi, ElfFlags flags)
+        internal ElfInfo(ElfFormat format, ElfInstructionSet instructionSet, ElfEndian endian, ElfAbi abi, ElfFlags flags)
         {
             Format = format;
             Abi = abi;
@@ -16,25 +16,25 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.ELF
             Flags = flags;
             Endian = endian;
         }
-        public ElfFormat Format { get; private set; }
-        public ElfInstructionSet InstructionSet { get; private set; }
-        public ElfAbi Abi { get; private set; }
-        public ElfFlags Flags { get; private set; }
+        internal ElfFormat Format { get; private set; }
+        internal ElfInstructionSet InstructionSet { get; private set; }
+        internal ElfAbi Abi { get; private set; }
+        internal ElfFlags Flags { get; private set; }
 
-        public ElfEndian Endian { get; private set; }
+        internal ElfEndian Endian { get; private set; }
     }
-    public enum ElfEndian
+    enum ElfEndian
     {
         Little = 1,
         Big = 2
 
     }
-    public enum ElfFormat
+    enum ElfFormat
     {
         Elf32 = 1,
         Elf64 = 2
     }
-    public enum ElfInstructionSet
+    enum ElfInstructionSet
     {
         SPARC = 0x02,
         x86 = 0x03,
@@ -46,7 +46,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.ELF
         x86_64 = 0x3E,
         AArch64 = 0xB7
     }
-    public enum ElfAbi
+    enum ElfAbi
     {
         Any = 0,
         HP_UX = 0x01,
@@ -59,7 +59,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.ELF
         OpenBSD = 0x0C
     }
 
-    public enum ElfFlags
+    enum ElfFlags
     {
         Relocatable = 1,
         Executable = 2,

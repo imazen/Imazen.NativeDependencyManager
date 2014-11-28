@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
 {
-    class MachSingleParser
+    internal class MachSingleParser
     {
 
         const uint MH_MAGIC = 0xfeedface;
@@ -16,7 +16,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
         const uint MH_CIGAM_64 = 0xcffaedfe;
 
 
-        public MachInfo Parse(IIntegerReader s)
+        internal MachInfo Parse(IIntegerReader s)
         {
             var magic = s.ReadUInt32();
             MachHeaderType type;

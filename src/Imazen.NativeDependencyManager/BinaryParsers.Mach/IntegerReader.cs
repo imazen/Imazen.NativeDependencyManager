@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
 {
-    class IntegerReader:IIntegerReader
+    internal class IntegerReader : IIntegerReader
     {
 
         BinaryReader s;
         bool reverse;
-        public IntegerReader(BinaryReader s, bool reverseEndian)
+        internal IntegerReader(BinaryReader s, bool reverseEndian)
         {
             this.s = s;
             this.reverse = reverseEndian;

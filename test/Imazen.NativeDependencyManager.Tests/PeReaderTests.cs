@@ -14,211 +14,191 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.Tests
     {
 
         [Test]
-        public void CSharp()
+        public async void CSharp()
         {
-            var x86 = GetResourceImage("Csharp_x86.dll");
-            var x86_unsafe = GetResourceImage("Csharp_x86_unsafe.dll");
-            var x64 = GetResourceImage("Csharp_x64.dll");
-            var x64_unsafe = GetResourceImage("Csharp_x64_unsafe.dll");
-            var anycpu = GetResourceImage("Csharp_AnyCPU.dll");
-            var anycpu_unsafe = GetResourceImage("Csharp_AnyCPU_unsafe.dll");
+            var cs = await Get("Csharp_", "x86.dll","x86_unsafe.dll",
+                    "x64.dll","x64_unsafe.dll", "AnyCPU.dll", 
+                    "AnyCPU_unsafe.dll");
+            var x86 = cs[0];
+            var x86_unsafe = cs[1];
+            var x64 = cs[2];
+            var x64_unsafe = cs[3];
+            var anycpu = cs[4];
+            var anycpu_unsafe = cs[5];
 
-            foreach (var i in new[] { x86, x86_unsafe, x64, x64_unsafe, anycpu, anycpu_unsafe })
+            foreach (var i in cs)
             {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
-                Assert.True((ModuleAttributes.ILOnly & i.Attributes) != 0); //They should all be IL only
+                //Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
+                Assert.True((BinaryClrFlags.ILOnly & i.ClrFlags) != 0); //They should all be IL only
 
-                Assert.False((ModuleAttributes.Preferred32Bit & i.Attributes) != 0);
-                Assert.False((ModuleAttributes.StrongNameSigned & i.Attributes) != 0);
-                Assert.False((ModuleAttributes.Value_16 & i.Attributes) != 0);
+                Assert.False((BinaryClrFlags.Preferred32Bit & i.ClrFlags) != 0);
+                Assert.False((BinaryClrFlags.StrongNameSigned & i.ClrFlags) != 0);
+                Assert.False((BinaryClrFlags.NativeEntryPoint & i.ClrFlags) != 0);
             }
             foreach (var i in new[] { x86, x86_unsafe })
             {
-                Assert.True((ModuleAttributes.Required32Bit & i.Attributes) != 0);
+                Assert.True((BinaryClrFlags.Required32Bit & i.ClrFlags) != 0);
             }
             foreach (var i in new[] { x86, x86_unsafe, anycpu, anycpu_unsafe })
             {
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+                Assert.True(i.HasTarget(InstructionSets.x86));
             }
             foreach (var i in new[] {x64, x64_unsafe })
             {
-                Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
+                Assert.True(i.HasTarget(InstructionSets.x86_64));
             }
         }
 
         [Test]
 
-        public void TestNative()
+        public async void TestNative()
         {
-            var native_x86 = GetResourceImage("NativeCpp_Release_Win32.dll");
-            var native_x64 = GetResourceImage("NativeCpp_Release_x64.dll");
+            var native_x86 = await GetBinaryInfo("NativeCpp_Release_Win32.dll");
+            var native_x64 = await GetBinaryInfo("NativeCpp_Release_x64.dll");
 
-            Assert.AreEqual(ModuleAttributes.None, native_x86.Attributes);
-            Assert.AreEqual(ModuleAttributes.None, native_x64.Attributes);
-            Assert.AreEqual(TargetRuntime.NotDotNet, native_x86.DotNetRuntime);
-            Assert.AreEqual(TargetRuntime.NotDotNet, native_x64.DotNetRuntime);
-            Assert.AreEqual(TargetArchitecture.AMD64, native_x64.Architecture);
-            Assert.AreEqual(TargetArchitecture.I386, native_x86.Architecture);
+            Assert.AreEqual(BinaryClrFlags.None, native_x86.ClrFlags);
+            Assert.AreEqual(BinaryClrFlags.None, native_x64.ClrFlags);
+            Assert.False(native_x86.IsDotNet);
+            Assert.False(native_x64.IsDotNet);
+            Assert.True(native_x64.HasTarget(InstructionSets.x86_64));
+            Assert.True(native_x86.HasTarget(InstructionSets.x86));
 
 
         }
 
         [Test]
-        public void CppCli_2_0()
+        public async void CppCli_2_0()
         {
-            var cppcli2 = GetResourceImage("cppcli.dll");
+            var cppcli2 = await GetBinaryInfo("cppcli.dll");
 
-            Assert.AreEqual(TargetRuntime.Net_2_0, cppcli2.DotNetRuntime);
-            Assert.AreEqual(TargetArchitecture.I386, cppcli2.Architecture);
-            Assert.AreEqual(ModuleAttributes.Value_16, cppcli2.Attributes);
+            //Assert.AreEqual(TargetRuntime.Net_2_0, cppcli2.DotNetRuntime);
+            Assert.True(cppcli2.HasTarget(InstructionSets.x86));
+            Assert.AreEqual(BinaryClrFlags.NativeEntryPoint, cppcli2.ClrFlags);
         }
 
 
         [Test]
-        public void CppCli_4_Win_32()
+        public async void CppCli_4_Win_32()
         {
+            var w32_set = await Get("CppCli_Release_Win32", ".dll","_Safe.dll", "_Pure.dll" );
+            var w32 = w32_set[0];
+            var w32_safe = w32_set[1];
+            var w32_pure = w32_set[2];
 
-            var w32 = GetResourceImage("CppCli_Release_Win32.dll");
-            var w32_safe = GetResourceImage("CppCli_Release_Win32_Safe.dll");
-            var w32_pure = GetResourceImage("CppCli_Release_Win32_Pure.dll");
-
-            foreach (var i in new[] { w32, w32_safe, w32_pure })
+            foreach (var i in w32_set)
             {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
-                Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
+                //Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
+                Assert.True(i.HasTarget(InstructionSets.x86));
             }
 
-            Assert.AreEqual(ModuleAttributes.Value_16, w32.Attributes);
-            Assert.AreEqual(ModuleAttributes.ILOnly , w32_safe.Attributes);
+            Assert.AreEqual(BinaryClrFlags.NativeEntryPoint, w32.ClrFlags);
+            Assert.AreEqual(BinaryClrFlags.ILOnly , w32_safe.ClrFlags);
 
-            Assert.AreEqual(ModuleAttributes.ILOnly | ModuleAttributes.Required32Bit, w32_pure.Attributes);
+            Assert.AreEqual(BinaryClrFlags.ILOnly | BinaryClrFlags.Required32Bit, w32_pure.ClrFlags);
 
 
         }
 
         [Test]
-        public void CppCli_4_x64()
+        public async void CppCli_4_x64()
         {
-            var x64 = GetResourceImage("CppCli_Release_x64.dll");
-            var x64_safe = GetResourceImage("CppCli_Release_x64_Safe.dll");
-            var x64_pure = GetResourceImage("CppCli_Release_x64_Pure.dll");
+            var x64_set = await Get("CppCli_Release_x64", ".dll", "_Safe.dll", "_Pure.dll");
+            var x64 = x64_set[0];
+            var x64_safe = x64_set[1];
+            var x64_pure = x64_set[2];
             
-            foreach (var i in new[] { x64, x64_safe, x64_pure })
+            foreach (var i in x64_set)
             {
-                Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
+                //Assert.AreEqual(TargetRuntime.Net_4_0, i.DotNetRuntime);
             }
 
-            Assert.AreEqual(TargetArchitecture.AMD64, x64.Architecture);
-            Assert.AreEqual(ModuleAttributes.Value_16, x64.Attributes);
+            Assert.True(x64.HasTarget(InstructionSets.x86_64));
+            Assert.AreEqual(BinaryClrFlags.NativeEntryPoint, x64.ClrFlags);
             
             
-            Assert.AreEqual(TargetArchitecture.I386, x64_safe.Architecture); //AnyCPU??
-            Assert.AreEqual(ModuleAttributes.ILOnly, x64_safe.Attributes);
+            Assert.True(x64_safe.HasTarget(InstructionSets.x86)); //AnyCPU??
+            Assert.AreEqual(BinaryClrFlags.ILOnly, x64_safe.ClrFlags);
 
-            Assert.AreEqual(TargetArchitecture.AMD64, x64_pure.Architecture);
-            Assert.AreEqual(ModuleAttributes.ILOnly, x64_pure.Attributes);
+            Assert.True(x64_pure.HasTarget(InstructionSets.x86_64));
+            Assert.AreEqual(BinaryClrFlags.ILOnly, x64_pure.ClrFlags);
 
         }
 
-
         [Test]
-        public void ImageSections()
+        public async void ImageMetadataVersion()
         {
-            var image = GetResourceImage("hello.exe");
+            var image = await GetBinaryInfo("hello.exe");
+            //Assert.AreEqual(TargetRuntime.Net_2_0, image.DotNetRuntime);
 
-            Assert.AreEqual(3, image.Sections.Length);
-            Assert.AreEqual(".text", image.Sections[0].Name);
-            Assert.AreEqual(".rsrc", image.Sections[1].Name);
-            Assert.AreEqual(".reloc", image.Sections[2].Name);
+            image = await GetBinaryInfo("hello1.exe");
+           // Assert.AreEqual(TargetRuntime.Net_1_1, image.DotNetRuntime);
         }
 
         [Test]
-        public void ImageMetadataVersion()
+        public async void ImageModuleKind()
         {
-            var image = GetResourceImage("hello.exe");
-            Assert.AreEqual(TargetRuntime.Net_2_0, image.DotNetRuntime);
+            var image = await GetBinaryInfo("hello.exe");
+            Assert.AreEqual(BinaryKind.Executable, image.Kind);
 
-            image = GetResourceImage("hello1.exe");
-            Assert.AreEqual(TargetRuntime.Net_1_1, image.DotNetRuntime);
-        }
+            image = await GetBinaryInfo("libhello.dll");
+            Assert.AreEqual(BinaryKind.Dll, image.Kind);
 
-        [Test]
-        public void ImageModuleKind()
-        {
-            var image = GetResourceImage("hello.exe");
-            Assert.AreEqual(ModuleKind.Console, image.Kind);
-
-            image = GetResourceImage("libhello.dll");
-            Assert.AreEqual(ModuleKind.Dll, image.Kind);
-
-            image = GetResourceImage("hellow.exe");
-            Assert.AreEqual(ModuleKind.Windows, image.Kind);
+            image = await GetBinaryInfo("hellow.exe");
+            Assert.AreEqual(BinaryKind.Executable, image.Kind);
         }
 
        
         [Test]
-        public void X64Module()
+        public async void X64Module()
         {
-            var i = GetResourceImage("hello.x64.exe");
-            Assert.AreEqual(TargetArchitecture.AMD64, i.Architecture);
-            Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
+            var i = await GetBinaryInfo("hello.x64.exe");
+            Assert.True(i.HasTarget(InstructionSets.x86_64));
+            Assert.AreEqual(BinaryClrFlags.ILOnly, i.ClrFlags);
            
         }
 
         [Test]
-        public void IA64Module()
+        public async void IA64Module()
         {
-            var i = GetResourceImage("hello.ia64.exe");
-            
-            Assert.AreEqual(TargetArchitecture.IA64, i.Architecture);
-            Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
-            
-        }
-
-        [Test]
-        public void X86Module()
-        {
-            var i = GetResourceImage("hello.x86.exe");
-            Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-            Assert.AreEqual(ModuleAttributes.ILOnly | ModuleAttributes.Required32Bit, i.Attributes);
+            var i = await GetBinaryInfo("hello.ia64.exe");
+            Assert.True(i.HasTarget(InstructionSets.IA64));
+            Assert.AreEqual(BinaryClrFlags.ILOnly, i.ClrFlags);
             
         }
 
         [Test]
-        public void AnyCpuModule()
+        public async void X86Module()
         {
-            var i = GetResourceImage("hello.anycpu.exe");
-            Assert.AreEqual(TargetArchitecture.I386, i.Architecture);
-            Assert.AreEqual(ModuleAttributes.ILOnly, i.Attributes);
+            var i = await GetBinaryInfo("hello.x86.exe");
+            Assert.True(i.HasTarget(InstructionSets.x86));
+            Assert.AreEqual(BinaryClrFlags.ILOnly | BinaryClrFlags.Required32Bit, i.ClrFlags);
+            
+        }
+
+        [Test]
+        public async void AnyCpuModule()
+        {
+            var i = await GetBinaryInfo("hello.anycpu.exe");
+            Assert.True(i.HasTarget(InstructionSets.x86));
+            Assert.AreEqual(BinaryClrFlags.ILOnly, i.ClrFlags);
            
         }
 
         [Test]
-        public void DelaySignedAssembly()
+        public async void DelaySignedAssembly()
         {
-            var i = GetResourceImage("delay-signed.dll");
-            Assert.AreNotEqual(ModuleAttributes.StrongNameSigned, i.Attributes & ModuleAttributes.StrongNameSigned);
-            Assert.AreNotEqual(0, i.StrongName.VirtualAddress);
-            Assert.AreNotEqual(0, i.StrongName.Size);
+            var i = await GetBinaryInfo("delay-signed.dll");
+            Assert.AreNotEqual(BinaryClrFlags.StrongNameSigned, i.ClrFlags & BinaryClrFlags.StrongNameSigned);
            
         }
 
         [Test]
-        public void WindowsPhoneNonSignedAssembly()
+        public async void WindowsPhoneNonSignedAssembly()
         {
-            var i = GetResourceImage("wp7.dll");
-            Assert.AreNotEqual(ModuleAttributes.StrongNameSigned, i.Attributes & ModuleAttributes.StrongNameSigned);
-            Assert.AreEqual(0, i.StrongName.VirtualAddress);
-            Assert.AreEqual(0, i.StrongName.Size);
-           
+            var i = await GetBinaryInfo("wp7.dll");
+            Assert.AreNotEqual(BinaryClrFlags.StrongNameSigned, i.ClrFlags & BinaryClrFlags.StrongNameSigned);
         }
 
-        [Test]
-        public void MetroAssembly()
-        {
-            var i = GetResourceImage("metro.exe");
-            Assert.AreEqual(ModuleCharacteristics.AppContainer, i.Characteristics & ModuleCharacteristics.AppContainer);
-            
-        }
+        
     }
 }

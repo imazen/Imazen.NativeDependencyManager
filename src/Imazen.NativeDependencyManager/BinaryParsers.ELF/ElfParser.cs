@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 namespace Imazen.NativeDependencyManager.BinaryParsers.ELF
 {
     
-    class ElfParser
+    internal class ElfParser
     {
          static byte[] magic_elf = new byte[]{0x7F, 0x45,0x4C, 0x46};
-        ElfInfo Read(Stream r)
+        internal ElfInfo Read(Stream r)
         {
             byte[] buf = new byte[20];
             if (r.Read(buf,0,20) < 20) return null;
             return Read(buf);
          }
 
-        ElfInfo Read(byte[] header){
+        internal ElfInfo Read(byte[] header){
+            if (header.Length < 20) return null;
             //https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
         
             //0x7F followed by ELF in ASCII; these four bytes constitute the magic number.

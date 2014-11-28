@@ -34,37 +34,38 @@ using RVA = System.UInt32;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
-	public sealed class Image {
+    internal sealed class Image
+    {
 
-		public ModuleKind Kind;
-		public string DotNetRuntimeVersionString;
+        internal ModuleKind Kind;
+        internal string DotNetRuntimeVersionString;
 
-        public TargetRuntime DotNetRuntime = TargetRuntime.NotDotNet;
-
-
-
-		public TargetArchitecture Architecture;
-		public ModuleCharacteristics Characteristics;
-		public string FileName;
-
-		public Section [] Sections;
+        internal TargetRuntime DotNetRuntime = TargetRuntime.NotDotNet;
 
 
-		public uint EntryPointToken;
-		public ModuleAttributes Attributes;
 
-		public DataDirectory Debug;
-		public DataDirectory Resources;
-		public DataDirectory StrongName;
+        internal InstructionSets Architecture;
+        internal ModuleCharacteristics Characteristics;
+        internal string FileName;
+
+        internal Section[] Sections;
 
 
-		
-		public Image ()
+        internal uint EntryPointToken;
+        internal BinaryClrFlags Attributes;
+
+        internal DataDirectory Debug;
+        internal DataDirectory Resources;
+        internal DataDirectory StrongName;
+
+
+
+        internal Image()
 		{
 		
 		}
 
-		public uint ResolveVirtualAddress (RVA rva)
+        internal uint ResolveVirtualAddress(RVA rva)
 		{
 			var section = GetSectionAtVirtualAddress (rva);
 			if (section == null)
@@ -78,9 +79,9 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 			return rva + section.PointerToRawData - section.VirtualAddress;
 		}
 
-	
 
-		public Section GetSectionAtVirtualAddress (RVA rva)
+
+        internal Section GetSectionAtVirtualAddress(RVA rva)
 		{
 			var sections = this.Sections;
 			for (int i = 0; i < sections.Length; i++) {

@@ -10,7 +10,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
     class MachParser
     {
 
-        public IEnumerable<MachInfo> Parse(BinaryReader s)
+        internal IEnumerable<MachInfo> Parse(BinaryReader s)
         {
             var list = new List<MachInfo>();
             foreach (var reverseEndian in new[]{true,false}){
@@ -22,7 +22,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
                 var multi = new MachFatParser().Parse(reader);
                 if (multi != null) list.AddRange(multi);
             }
-            return list;
+            return list.Count() > 0 ? list : null;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
 {
-    class MachFatParser
+    internal class MachFatParser
     {
         const uint FAT_MAGIC = 0xcafebabe;
         const uint FAT_CIGAM = 0xbebafeca;
@@ -17,7 +17,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public IEnumerable<MachInfo> Parse(IIntegerReader s)
+        internal IEnumerable<MachInfo> Parse(IIntegerReader s)
         {
             //Magic byte
             if (s.ReadUInt32() != FAT_MAGIC) return null;

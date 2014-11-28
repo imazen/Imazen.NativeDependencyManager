@@ -52,6 +52,9 @@
     <Compile Include="BinaryParsers.PE\ImageReader.cs" />
     <Compile Include="BinaryParsers.PE\ModuleKind.cs" />
     <Compile Include="BinaryParsers.PE\Section.cs" />
+    <Compile Include="BinaryParsers\BinaryInfo.cs" />
+    <Compile Include="BinaryParsers\BinaryParser.cs" />
+    <Compile Include="BinaryParsers\IBinaryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

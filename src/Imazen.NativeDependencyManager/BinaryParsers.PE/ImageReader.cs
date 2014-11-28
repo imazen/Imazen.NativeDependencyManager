@@ -36,9 +36,10 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 
 
-	public sealed class ImageReader : BinaryReader {
+    internal sealed class ImageReader : BinaryReader
+    {
 
-        public ImageReader(Stream stream)
+        internal ImageReader(Stream stream)
 			: base (stream)
 		{
             image = new Image();
@@ -48,7 +49,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
         /// <summary>
         /// If true, will read the CLR version and assembly characteristics - this can require 2 additional seeks over dozens of kb
         /// </summary>
-        public bool ReadClrInfo { get; set; }
+        internal bool ReadClrInfo { get; set; }
 
         protected void Advance(int bytes)
         {
@@ -69,7 +70,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
         /// <summary>
         /// Returns the full path of the underlying FileStream - if it's actually a file stream.
         /// </summary>
-        public string FileStreamName
+        internal string FileStreamName
         {
             get
             {
@@ -78,14 +79,14 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
             }
         }
 
-		
 
-		public void MoveTo (DataDirectory directory)
+
+        internal void MoveTo(DataDirectory directory)
 		{
 			BaseStream.Position = image.ResolveVirtualAddress (directory.VirtualAddress);
 		}
 
-		public void MoveTo (uint position)
+        internal void MoveTo(uint position)
 		{
 			BaseStream.Position = position;
 		}
@@ -146,18 +147,18 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 		}
 
-		TargetArchitecture ReadArchitecture ()
+		InstructionSets ReadArchitecture ()
 		{
 			var machine = ReadUInt16 ();
 			switch (machine) {
 			case 0x014c:
-				return TargetArchitecture.I386;
+				return InstructionSets.x86;
 			case 0x8664:
-				return TargetArchitecture.AMD64;
+				return InstructionSets.x86_64;
 			case 0x0200:
-				return TargetArchitecture.IA64;
+				return InstructionSets.IA64;
 			case 0x01c4:
-				return TargetArchitecture.ARMv7;
+				return InstructionSets.ARM;
 			}
 
 			throw new NotSupportedException ();
@@ -319,7 +320,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 			// Metadata					8
 			metadata = ReadDataDirectory ();
 			// Flags					4
-			image.Attributes = (ModuleAttributes) ReadUInt32 ();
+			image.Attributes = (BinaryClrFlags) ReadUInt32 ();
 			// EntryPointToken			4
 			image.EntryPointToken = ReadUInt32 ();
 			// Resources				8
@@ -365,7 +366,7 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
             
         }
 
-		public static Image ReadImageFrom (Stream stream, bool minimal)
+        internal static Image ReadImageFrom(Stream stream, bool minimal)
 		{
             var reader = new ImageReader(stream) { ReadClrInfo =true };
 				

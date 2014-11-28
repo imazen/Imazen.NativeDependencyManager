@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
 {
-    public interface IIntegerReader
+    internal interface IIntegerReader
     {
         UInt32 ReadUInt32();
         Int32 ReadInt32();

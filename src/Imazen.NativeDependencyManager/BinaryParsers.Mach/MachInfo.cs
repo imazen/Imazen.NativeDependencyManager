@@ -6,32 +6,33 @@ using System.Threading.Tasks;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
 {
-    public class MachInfo
+    internal class MachInfo
     {
-        public MachInfo(MachHeaderType headerType, int cpu_type, int cpu_subtype, Nullable<MachFileType> file_type){
+        internal MachInfo(MachHeaderType headerType, int cpu_type, int cpu_subtype, Nullable<MachFileType> file_type)
+        {
             HeaderType = headerType;
             this.CpuType = (MachCpuType)cpu_type;
             this.cpu_subtype = cpu_subtype;
             this.FileType = file_type;
         }
-        public MachHeaderType HeaderType { get; private set; }
-        public Nullable<MachFileType> FileType { get; private set; }
+        internal MachHeaderType HeaderType { get; private set; }
+        internal Nullable<MachFileType> FileType { get; private set; }
 
-        public MachCpuType CpuType { get; private set; }
-        public int cpu_subtype { get; private set; }
+        internal MachCpuType CpuType { get; private set; }
+        internal int cpu_subtype { get; private set; }
 
 
         /// <summary>
         /// Architecture bits are present in cpu_type, visible with 0xff000000 mask.
         /// True if the 64 bit ABI bit is on. Valid with x86, ARM, and PowerPC
         /// </summary>
-        public bool CPU_ABI64 { get { return (CpuType & MachCpuType.ABI_64_Flag) != 0; } }
+        internal bool CPU_ABI64 { get { return (CpuType & MachCpuType.ABI_64_Flag) != 0; } }
 
 
     }
 
     [Flags]
-    public enum MachCpuType : int
+    internal enum MachCpuType : int
     {
         ABI_64_Flag = 0x01000000,
         Any = -1,
@@ -50,13 +51,14 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.Mach
         PowerPC_64 = 18 | ABI_64_Flag
     }
 
-    public enum MachHeaderType{
+    internal enum MachHeaderType
+    {
         Mach32,
         Mach64,
         MachMulti
     }
 
-    public enum MachFileType
+    internal enum MachFileType
     {
         /// <summary>
         /// relocatable object file
