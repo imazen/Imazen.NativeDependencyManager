@@ -47,9 +47,7 @@
     <Compile Include="BinaryParsers.Mach\MachInfo.cs" />
     <Compile Include="BinaryParsers.Mach\MachParser.cs" />
     <Compile Include="BinaryParsers.Mach\MachSingleParser.cs" />
-    <Compile Include="BinaryParsers.PE\BinaryStreamReader.cs" />
     <Compile Include="BinaryParsers.PE\DataDirectory.cs" />
-    <Compile Include="BinaryParsers.PE\Empty.cs" />
     <Compile Include="BinaryParsers.PE\Image.cs" />
     <Compile Include="BinaryParsers.PE\ImageReader.cs" />
     <Compile Include="BinaryParsers.PE\ModuleKind.cs" />

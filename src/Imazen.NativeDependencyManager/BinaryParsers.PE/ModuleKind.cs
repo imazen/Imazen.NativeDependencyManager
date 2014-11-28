@@ -28,7 +28,7 @@
 
 using System;
 
-namespace Imazen.NativeDependencyManager.BinaryParsers {
+namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
     public enum TargetRuntime
     {

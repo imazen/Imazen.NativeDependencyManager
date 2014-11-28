@@ -36,7 +36,25 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 
 
-	public sealed class ImageReader : BinaryStreamReader {
+	public sealed class ImageReader : BinaryReader {
+
+        public ImageReader(Stream stream)
+			: base (stream)
+		{
+            image = new Image();
+
+            image.FileName = FileStreamName;
+		}
+
+        protected void Advance(int bytes)
+        {
+            BaseStream.Seek(bytes, SeekOrigin.Current);
+        }
+
+        protected DataDirectory ReadDataDirectory()
+        {
+            return new DataDirectory(ReadUInt32(), ReadUInt32());
+        }
 
 		readonly Image image;
 
@@ -45,13 +63,20 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
         bool RequireCLI = false;
 
-		public ImageReader (Stream stream)
-			: base (stream)
-		{
-			image = new Image ();
 
-			image.FileName = stream.GetFullyQualifiedName ();
-		}
+        /// <summary>
+        /// Returns the full path of the underlying FileStream - if it's actually a file stream.
+        /// </summary>
+        public string FileStreamName
+        {
+            get
+            {
+                var fs = this.BaseStream as FileStream;
+                return fs == null ? "" : Path.GetFullPath(fs.Name);
+            }
+        }
+
+		
 
 		void MoveTo (DataDirectory directory)
 		{
@@ -368,12 +393,13 @@ namespace Imazen.NativeDependencyManager.BinaryParsers.PE {
 
 		public static Image ReadImageFrom (Stream stream)
 		{
+            var reader = new ImageReader (stream);
+				
 			try {
-				var reader = new ImageReader (stream);
 				reader.ReadImage ();
 				return reader.image;
 			} catch (EndOfStreamException e) {
-				throw new BadImageFormatException (stream.GetFullyQualifiedName (), e);
+				throw new BadImageFormatException (reader.FileStreamName, e);
 			}
 		}
 	}
