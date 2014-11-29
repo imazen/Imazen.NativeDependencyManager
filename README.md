@@ -24,6 +24,89 @@ Work in progress, move on. See [one of these similar projects](https://github.co
 * Support multiple architectures in a single deployment. Arch/plat-specific bin subfolders would be a typical.
 * Customize the assembly search path (usually to be subfolder aware), cross platform. This means replacing the entire assembly loading process. 
 
+# Implementation
+
+Runtime compatibility checks
+
+Determine if a (win32, clr, mac, or linux) dynamic library or executable will work in the current (or an arbitrary) runtime.
+
+* [x] BinaryParser - Read type, platform, architecture(s) of any file.
+* [ ] EnvironmentProfile - Represents an exeuction environment
+* [ ] CompatChecker - Compare IBinaryInfo to an EnvironmentProfile to see if it is compatible.
+
+xplat dylib loading
+
+* [ ] (NativeLoader) - Load (if not loaded) native DLLs from specific locations with dlopen/LoadLibraryEx, dlclose/UnloadLibraryEx.  P/Invoke otherwise uses a limited search path.
+* [ ] (ManagedLoader) - Load managed assemblies
+
+Search paths
+
+* [ ] SearchPath - Pair directories with optional arch/plat expectations. Perhaps add exclusions?
+* [ ] ConventionalSearch - Conventional search for a `/bin /bin/x86 /bin/Win32 /bin/x64` layout.
+* [ ] ConventionalMultiPlatSearch - Conventional search for multi-plat layout - /bin /bin/linux /bin/win /bin/mac /bin/x86 /bin/x86/linux /bin/x86/win /bin/x86/mac /bin/Win32 /bin/x64 ...
+* [ ] DevSearch - look recursively throughout entire project folder for candidates.
+
+File-based constraints
+
+* [ ] BuildTimeConstraint - requires that the dependency has been built within a given TimeSpan
+* [ ] RelativeBuildTimeConstraint - requires the dependency has been built within a TimeSpan of a reference binary's build time.
+* [ ] CompatibleConstraint - wrapper for CompatChecker + BinaryParsers
+* [ ] SHA1Constraint - wrapper for sha1 hashing of file
+
+Direct locating (no versioning, recursion, or indirect loading)
+
+* [ ] DirectLocator - Takes a search path and a set of constraints that operate on file names
+
+
+# Unit tests
+
+* BinaryParser Coverage is good on windows and .net binaries
+* BinaryParser - No coverage on nix/mac parsing. Need headers from a variety of files (first 128 bytes).
+
+
+
+
+### Ideas for integration tests to create
+
+#### Variants
+
+* Caller assembly and compile-time location may both be different from where the native dependencies are present. For ASP.NET, we may be able to figure this out. For tests, we may have to set an env var.
+* Environment variables
+* Loader arguments
+* Filesystem state (are there even x64, x32, and Win32 folders)?
+* Is there an arch-specific dll arealdy in the current folder?
+* Type of native dependencies (C++/CLI, fully native?)
+* Transitive dependencies? How can we ensure the right copy is present and loaded? Should we require metadata for this? (probably)
+* How many different dependency trees do we need to manage? What if they have conflicts.
+* 
+* Given an ASP.NET web app, and a caller within the /bin folder
+* Compile managed caller to one location, then copy it to another, then shadow-copy it? 
+* In an 
+
+
+## Resources 
+
+* [DLL search order](http://msdn.microsoft.com/en-us/library/windows/desktop/ms682586(v=vs.85).aspx)
+* [Parsing .net headers (wish I'd found this before subsetting Cecil)](http://wyday.com/blog/2010/how-to-detect-net-assemblies-x86-x64-anycpu/)
+
+
+---
+---
+
+# Design incomplete below this point
+
+Catch-22. 
+
+* If we delay loading dependencies until we can access embedded resources, 
+  then we must futher delay loading of *any* dependencies until all embedded resources are loaded. 
+  Otherwise we cannot resolve conflicts.
+* If we want to support non-lazy C++/CLI->dll refs or managed assemblies that P/Invoke during load, 
+  we need to load their dependencies before we can access their dependency descriptors. We probably can't support these scenarios.
+* Loading must occur before any requests can reach the server; it MUST happen in App_Start or an equivalent 
+
+
+
+
 ### Deployment use cases
 
 * Given an arch + plat target, fetch external, then collapse and de-duplicate all assemblies to a single folder.
@@ -60,38 +143,6 @@ Assembly attributes to specify feed? Embedded resource names?
 * C++/CLI apps should use delay-loading of their dependencies if they want to internally specify the feed or dependencies.
 
 
-# Implementation
-
-Runtime compatibility checks
-
-Determine if a (win32, clr, mac, or linux) dynamic library or executable will work in the current (or an arbitrary) runtime.
-
-* [x] BinaryParser - Read type, platform, architecture(s) of any file.
-* [ ] EnvironmentProfile - Represents an exeuction environment
-* [ ] CompatChecker - Compare IBinaryInfo to an EnvironmentProfile to see if it is compatible.
-
-xplat dylib loading
-
-* [ ] (NativeLoader) - Load (if not loaded) native DLLs from specific locations with dlopen/LoadLibraryEx, dlclose/UnloadLibraryEx.  P/Invoke otherwise uses a limited search path.
-* [ ] (ManagedLoader) - Load managed assemblies
-
-Search paths
-
-* [ ] SearchPath - Pair directories with optional arch/plat expectations. Perhaps add exclusions?
-* [ ] ConventionalSearch - Conventional search for a `/bin /bin/x86 /bin/Win32 /bin/x64` layout.
-* [ ] ConventionalMultiPlatSearch - Conventional search for multi-plat layout - /bin /bin/linux /bin/win /bin/mac /bin/x86 /bin/x86/linux /bin/x86/win /bin/x86/mac /bin/Win32 /bin/x64 ...
-* [ ] DevSearch - look recursively throughout entire project folder for candidates.
-
-File-based constraints
-
-* [ ] BuildTimeConstraint - requires that the dependency has been built within a given TimeSpan
-* [ ] RelativeBuildTimeConstraint - requires the dependency has been built within a TimeSpan of a reference binary's build time.
-* [ ] CompatibleConstraint - wrapper for CompatChecker + BinaryParsers
-
-Direct locating (no versioning, recursion, or indirect loading)
-
-* [ ] DirectLocator - Takes a search path and a set of constraints that operate on file names
-
 
 Indirect/transitive dependency management
 
@@ -104,34 +155,3 @@ Indirect/transitive dependency management
 * [ ] InfoCache - cache binary info, sha-1, modified dates, etc. 
 * [ ] Cleaner - Enforce expectations on the filesytem. 
 * [ ] Downloader
-
-# Unit tests
-
-* BinaryParser Coverage is good on windows and .net binaries
-* BinaryParser - No coverage on nix/mac parsing. Need headers from a variety of files (first 128 bytes).
-
-
-
-
-### Ideas for integration tests to create
-
-#### Variants
-
-* Caller assembly and compile-time location may both be different from where the native dependencies are present. For ASP.NET, we may be able to figure this out. For tests, we may have to set an env var.
-* Environment variables
-* Loader arguments
-* Filesystem state (are there even x64, x32, and Win32 folders)?
-* Is there an arch-specific dll arealdy in the current folder?
-* Type of native dependencies (C++/CLI, fully native?)
-* Transitive dependencies? How can we ensure the right copy is present and loaded? Should we require metadata for this? (probably)
-* How many different dependency trees do we need to manage? What if they have conflicts.
-* 
-* Given an ASP.NET web app, and a caller within the /bin folder
-* Compile managed caller to one location, then copy it to another, then shadow-copy it? 
-* In an 
-
-
-## Resources 
-
-* [DLL search order](http://msdn.microsoft.com/en-us/library/windows/desktop/ms682586(v=vs.85).aspx)
-* [Parsing .net headers (wish I'd found this before subsetting Cecil)](http://wyday.com/blog/2010/how-to-detect-net-assemblies-x86-x64-anycpu/)
