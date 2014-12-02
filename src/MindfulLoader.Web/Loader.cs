@@ -14,10 +14,10 @@ namespace MindfulLoader.Web
     {
         private static IEnumerable<string> GetDylibsInFolder(string dir)
         {
-            var validExtensions = new string[] { null, "", "dll", "so", "dylib" };
+            var validExtensions = new string[] {"", ".dll", ".so", ".dylib" };
 
             return Directory.GetFiles(dir)
-                .Where(file => !validExtensions.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase));
+                .Where(file => validExtensions.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase));
 
         }
         private async static Task<Tuple<string,IBinaryInfo>[]> ParseBinaryInfo(IEnumerable<string> files){
