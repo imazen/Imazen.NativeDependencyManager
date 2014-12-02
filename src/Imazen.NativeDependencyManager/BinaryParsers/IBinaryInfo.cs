@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Imazen.NativeDependencyManager.BinaryParsers
 {
-    interface IBinaryInfo
+    public interface IBinaryInfo
     {
         BinaryClrFlags ClrFlags { get; }
         string DotNetVersionString { get; }

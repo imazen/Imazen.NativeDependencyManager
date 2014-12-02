@@ -5,8 +5,14 @@ Work in progress, move on. See [one of these similar projects](https://github.co
 
 ## open questions
 
-* Should we rename "Imazen.NativeDependencyManager" to "Udeps"? Is the brevity worth the clarity?
-* 
+* Should we rename "Imazen.NativeDependencyManager" to "Udeps" or "MindfulLoader"? Is the brevity worth the clarity?
+
+
+## Insurmountable caveats
+
+* We have to <remove assembly="*"/> in order to make ASP.NET apps use architecture-aware loading.
+
+
 
 ## Use cases
 
@@ -31,8 +37,8 @@ Runtime compatibility checks
 Determine if a (win32, clr, mac, or linux) dynamic library or executable will work in the current (or an arbitrary) runtime.
 
 * [x] BinaryParser - Read type, platform, architecture(s) of any file.
-* [ ] EnvironmentProfile - Represents an exeuction environment
-* [ ] CompatChecker - Compare IBinaryInfo to an EnvironmentProfile to see if it is compatible.
+* [x] EnvironmentProfile - Represents an exeuction environment
+* [x] CompatChecker - Compare IBinaryInfo to an EnvironmentProfile to see if it is compatible.
 
 xplat dylib loading
 
@@ -103,7 +109,7 @@ Catch-22.
 * If we want to support non-lazy C++/CLI->dll refs or managed assemblies that P/Invoke during load, 
   we need to load their dependencies before we can access their dependency descriptors. We probably can't support these scenarios.
 * Loading must occur before any requests can reach the server; it MUST happen in App_Start or an equivalent 
-
+* If we don't use the Assembly.Load context, we are *forced* to fix it with the AssemblyResolve event.
 
 
 

@@ -55,6 +55,8 @@
     <Compile Include="BinaryParsers\BinaryInfo.cs" />
     <Compile Include="BinaryParsers\BinaryParser.cs" />
     <Compile Include="BinaryParsers\IBinaryInfo.cs" />
+    <Compile Include="CompatChecker.cs" />
+    <Compile Include="EnvironmentProfile.cs" />
     <Compile Include="FileHashProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

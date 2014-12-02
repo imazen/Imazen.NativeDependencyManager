@@ -13,7 +13,13 @@ namespace Imazen.NativeDependencyManager.BinaryParsers
         //Mach 48 bytes for 1 or 2-arch binary, 128 bytes for 6-arch
         //PE - 64 bytes at start of file, then seek, then read, then seek, then read..
 
-        public async Task<BinaryInfo> ReadBinaryInfo(Stream s)
+        public Task<IBinaryInfo> ReadBinaryInfo(string physicalPath)
+        {
+            using (var s = File.Open(physicalPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                return ReadBinaryInfo(s);
+        }
+
+        public async Task<IBinaryInfo> ReadBinaryInfo(Stream s)
         {
             byte[] buffer = new byte[128];
             int count = await s.ReadAsync(buffer, 0, 128);

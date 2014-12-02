@@ -6,16 +6,7 @@ using System.Threading.Tasks;
 
 namespace Imazen.NativeDependencyManager.BinaryParsers
 {
-    
-    public enum InstructionSets
-    {
-        x86 = 1,
-        x86_64 = 2,
-        ARM = 3,
-        ARM_64 = 4,
-        IA64 = 5,
-        Other = 6
-    }
+   
     public enum BinaryStructure
     {
         /// <summary>
