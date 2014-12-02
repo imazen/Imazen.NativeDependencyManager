@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imazen.NativeDependencyManager", "src\Imazen.NativeDependencyManager\Imazen.NativeDependencyManager.csproj", "{06F5D232-DF1F-4526-9354-5433B3F9D49B}"
 EndProject
@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NOTICE = NOTICE
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindfulLoader.Web", "src\MindfulLoader.Web\MindfulLoader.Web.csproj", "{DBC8ABEF-710B-4F39-8DAF-62A27EE0DB11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{CF9F704A-FA24-4247-9C9D-B18333606A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF9F704A-FA24-4247-9C9D-B18333606A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF9F704A-FA24-4247-9C9D-B18333606A83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBC8ABEF-710B-4F39-8DAF-62A27EE0DB11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBC8ABEF-710B-4F39-8DAF-62A27EE0DB11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBC8ABEF-710B-4F39-8DAF-62A27EE0DB11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBC8ABEF-710B-4F39-8DAF-62A27EE0DB11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
