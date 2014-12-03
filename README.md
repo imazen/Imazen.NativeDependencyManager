@@ -10,8 +10,17 @@ Work in progress, move on. See [one of these similar projects](https://github.co
 
 ## Insurmountable caveats
 
-* We have to <remove assembly="*"/> in order to make ASP.NET apps use architecture-aware loading.
+* We have to use `&lt;remove assembly="*"/>` in order to make ASP.NET apps use architecture-aware loading on managed assemblies. Then we have to go back and finish the ASP.NET assembly load and PreAppStart invokation sequence.
+* We have to physcially move files out-of and into the probe path if we [want to stay in the Load context](http://blogs.msdn.com/b/suzcook/archive/2003/05/29/57143.aspx).
 
+
+## Creating a compatibility table and sane arch/plat groups
+
+We can glean a [lot of information](https://github.com/imazen/Imazen.NativeDependencyManager/blob/master/src/Imazen.NativeDependencyManager/BinaryParsers/IBinaryInfo.cs) from parsing assemblies, but the docs are poor on exactly what works where. What constitutes an ARM-compatible dll? Is there any metadata to mark something as portable? Does 32-bit code work on both 32-bit x86 and ARM platforms? Is IA64 even a valid target?
+
+https://github.com/imazen/Imazen.NativeDependencyManager/blob/master/src/Imazen.NativeDependencyManager/CompatChecker.cs
+
+Should we even try to support mobile platforms, or should we focus on dev and server x86 and x64 scenarios?
 
 
 ## Use cases
