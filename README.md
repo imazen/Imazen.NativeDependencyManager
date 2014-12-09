@@ -7,6 +7,7 @@ Work in progress, move on. See [one of these similar projects](https://github.co
 
 * Should we rename "Imazen.NativeDependencyManager" to "Udeps" or "MindfulLoader"? Is the brevity worth the clarity?
 * Do "32-bit only" .NET binaries also work on ARM or Windows Phone platforms? Or are they actually x86 architecture specific?
+* Do "64-bit" .NET binaries also work on IA64? Might they potentially work on ARM64?
 
 ## Insurmountable caveats
 
